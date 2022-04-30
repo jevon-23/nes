@@ -291,6 +291,7 @@ src/cpu/cpu.o: src/cpu/cpu.c.o
 
 # target to build an object file
 src/cpu/cpu.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/cpu.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/cpu.c.o
 .PHONY : src/cpu/cpu.c.o
 
@@ -299,6 +300,7 @@ src/cpu/cpu.i: src/cpu/cpu.c.i
 
 # target to preprocess a source file
 src/cpu/cpu.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/cpu.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/cpu.c.i
 .PHONY : src/cpu/cpu.c.i
 
@@ -307,6 +309,7 @@ src/cpu/cpu.s: src/cpu/cpu.c.s
 
 # target to generate assembly for a file
 src/cpu/cpu.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/cpu.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/cpu.c.s
 .PHONY : src/cpu/cpu.c.s
 
@@ -315,6 +318,7 @@ src/cpu/instruction_set.o: src/cpu/instruction_set.c.o
 
 # target to build an object file
 src/cpu/instruction_set.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/instruction_set.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/instruction_set.c.o
 .PHONY : src/cpu/instruction_set.c.o
 
@@ -323,6 +327,7 @@ src/cpu/instruction_set.i: src/cpu/instruction_set.c.i
 
 # target to preprocess a source file
 src/cpu/instruction_set.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/instruction_set.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/instruction_set.c.i
 .PHONY : src/cpu/instruction_set.c.i
 
@@ -331,6 +336,7 @@ src/cpu/instruction_set.s: src/cpu/instruction_set.c.s
 
 # target to generate assembly for a file
 src/cpu/instruction_set.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/cpu/instruction_set.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/cpu/instruction_set.c.s
 .PHONY : src/cpu/instruction_set.c.s
 
@@ -363,6 +369,7 @@ src/mem/mem.o: src/mem/mem.c.o
 
 # target to build an object file
 src/mem/mem.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/mem/mem.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/mem/mem.c.o
 .PHONY : src/mem/mem.c.o
 
@@ -371,6 +378,7 @@ src/mem/mem.i: src/mem/mem.c.i
 
 # target to preprocess a source file
 src/mem/mem.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/mem/mem.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/mem/mem.c.i
 .PHONY : src/mem/mem.c.i
 
@@ -379,6 +387,7 @@ src/mem/mem.s: src/mem/mem.c.s
 
 # target to generate assembly for a file
 src/mem/mem.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/mem/mem.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/src/mem/mem.c.s
 .PHONY : src/mem/mem.c.s
 
@@ -411,6 +420,7 @@ src/utils/utils.o: src/utils/utils.c.o
 
 # target to build an object file
 src/utils/utils.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/utils/utils.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_utils.dir/build.make CMakeFiles/test_utils.dir/src/utils/utils.c.o
 .PHONY : src/utils/utils.c.o
 
@@ -419,6 +429,7 @@ src/utils/utils.i: src/utils/utils.c.i
 
 # target to preprocess a source file
 src/utils/utils.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/utils/utils.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_utils.dir/build.make CMakeFiles/test_utils.dir/src/utils/utils.c.i
 .PHONY : src/utils/utils.c.i
 
@@ -427,6 +438,7 @@ src/utils/utils.s: src/utils/utils.c.s
 
 # target to generate assembly for a file
 src/utils/utils.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/src/utils/utils.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_utils.dir/build.make CMakeFiles/test_utils.dir/src/utils/utils.c.s
 .PHONY : src/utils/utils.c.s
 

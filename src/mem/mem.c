@@ -45,7 +45,7 @@ bool valid_prgrom_bounds(uint16_t address) {
 }
 
 /* write a game file into memory */
-void writeGameFile(memory **mem, aFile gameFile) {
+void write_game_file(memory **mem, aFile gameFile) {
   memcpy(((*mem)->mem + (cart_prgrom_start)), *gameFile.contents,
          gameFile.fileSize);
 }

@@ -9,9 +9,10 @@ project (nes)
 
 # Create a sources variable with a link to all cpp files to compile
 set(SOURCES
-    src/build/main.c
+    src/build/main.c src/cpu/cpu.c src/cpu/instruction_set.c src/mem/mem.c src/utils/utils.c
     )
 
+add_compile_options(-g)
 # Add an executable with the above sources
 add_executable(nes ${SOURCES})
 

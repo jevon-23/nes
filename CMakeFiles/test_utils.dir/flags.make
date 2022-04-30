@@ -7,11 +7,11 @@ C_DEFINES =
 
 C_INCLUDES = -isystem /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest/include -isystem /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest
 
-C_FLAGS = 
+C_FLAGS = -g
 
 CXX_DEFINES = 
 
 CXX_INCLUDES = -isystem /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest/include -isystem /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest
 
-CXX_FLAGS = -std=gnu++11
+CXX_FLAGS = -g -std=gnu++11
 

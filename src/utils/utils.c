@@ -2,21 +2,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* convert 16 bits into little endian format */
+#define MAX_PROGRAM_LEN 500000000
 
-/* a = 1100 0011 1010 1111
+/* convert 16 bits from big endian into little endian format
+ * a = 1100 0011 1010 1111
  * a << 8 -> 1010 1111
  *
  * hi = 1010 1111 0000 0000
  * lo = 0000 0000 1100 1111
  * h|l= 1010 1111 1100 1111
  */
-uint16_t big2lil_endian(uint16_t bytes) {
+uint16_t switch_endian(uint16_t bytes) {
   uint16_t new_high = bytes << 8;
   uint16_t new_low = bytes >> 8;
   return new_high | new_low;
 }
-#define MAX_PROGRAM_LEN 500000000
+
+/* convert 16 bits from lil endian 2 big endian format */
+// uint16_t lil2big_endian(uint16_t bytes) {
+//   uint16_t new_high = bytes << ;
+//   uint16_t new_low = 0;
+//   return new_high | new_low;
+// }
+
 // If we run into an error, return a message and exit program.
 void error(int code) {
   switch (code) {

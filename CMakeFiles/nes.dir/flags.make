@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/Users/jevon/programs/emulators/nes/include
 
-C_FLAGS = 
+C_FLAGS = -g
 

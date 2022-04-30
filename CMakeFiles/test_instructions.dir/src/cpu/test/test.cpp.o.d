@@ -467,12 +467,12 @@ CMakeFiles/test_instructions.dir/src/cpu/test/test.cpp.o: \
   /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest/include/gtest/gtest-typed-test.h \
   /Users/jevon/programs/emulators/nes/_deps/googletest-src/googletest/include/gtest/gtest_pred_impl.h \
   /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/instruction_set.h \
+  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/cpu.h \
+  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/mem.h \
+  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/utils.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/xlocale/_inttypes.h \
-  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/cpu.h \
-  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/mem.h \
-  /Users/jevon/programs/emulators/nes/src/cpu/test/../../../include/utils.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/stdbool.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/stdbool.h

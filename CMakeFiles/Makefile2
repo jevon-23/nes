@@ -138,12 +138,12 @@ _deps/googletest-build/googletest/clean: _deps/googletest-build/googletest/CMake
 CMakeFiles/nes.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/nes.dir/build.make CMakeFiles/nes.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=9,10 "Built target nes"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=9,10,11,12,13,14 "Built target nes"
 .PHONY : CMakeFiles/nes.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/nes.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jevon/programs/emulators/nes/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jevon/programs/emulators/nes/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/nes.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jevon/programs/emulators/nes/CMakeFiles 0
 .PHONY : CMakeFiles/nes.dir/rule
@@ -165,7 +165,7 @@ CMakeFiles/test_instructions.dir/all: _deps/googletest-build/googletest/CMakeFil
 CMakeFiles/test_instructions.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_instructions.dir/build.make CMakeFiles/test_instructions.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=11,12,13,14,15 "Built target test_instructions"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=15,16,17,18,19 "Built target test_instructions"
 .PHONY : CMakeFiles/test_instructions.dir/all
 
 # Build rule for subdir invocation for target.
@@ -192,7 +192,7 @@ CMakeFiles/test_utils.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtes
 CMakeFiles/test_utils.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_utils.dir/build.make CMakeFiles/test_utils.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_utils.dir/build.make CMakeFiles/test_utils.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=16,17,18 "Built target test_utils"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jevon/programs/emulators/nes/CMakeFiles --progress-num=20,21,22 "Built target test_utils"
 .PHONY : CMakeFiles/test_utils.dir/all
 
 # Build rule for subdir invocation for target.

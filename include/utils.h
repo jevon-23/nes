@@ -10,7 +10,7 @@ typedef struct aFile {
   int fileSize;
 } aFile;
 
-uint16_t big2lil_endian(uint16_t bytes);
+uint16_t switch_endian(uint16_t bytes);
 aFile readFile(char *fileName);
 void readContents(aFile theFile);
 void printSpace();

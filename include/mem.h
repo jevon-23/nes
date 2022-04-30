@@ -62,6 +62,6 @@ memory *init_memory();
 void free_memory(memory *mem);
 
 /* write the rom file for the game into memory */
-void write_game_file(memory *mem, aFile gameFile);
+void write_game_file(memory **mem, aFile gameFile);
 
 #endif
