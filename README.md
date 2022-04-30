@@ -29,7 +29,7 @@ To run program (Not running):
 
 # Some Interesting Things To Me
 1. The status register is used to hold flags about the operation and it just helped me solidify an understanding of what it means to use a flag
-2. Addressing modes:
-  2.1: I feel like adressing modes are interesting b/c on one hand, I feel like it limits the variety of the instructions the cpu could handle.
-  At the same time, I feel like it creates an easy langauge to understand for developers to build on top of (if it was even built in asm at the time)
+2. Addressing modes:<br>
+  I feel like adressing modes are interesting b/c on one hand, I feel like it limits the variety of the instructions the cpu could handle.
+  At the same time, I feel like it creates an easy langauge to understand for developers to build on top of.
     Which leads me to question if using addressing mode was a design decision, or just a really clever way to use a limited piece of hardware
