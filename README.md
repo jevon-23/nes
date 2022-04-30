@@ -1,9 +1,8 @@
 # nes
-An emulator that allows for nes games to run. Following [guide](https://bugzmanov.github.io/nes_ebook/chapter_1.html) loosely.
-  Honestly, huge shoutout to this author this is really nicely written w/ good links that give thorough details. Makes me interested in doing something
-  similar to this as I progress and learn new things.
+An emulator that allows for nes games to run. Following [guide](https://bugzmanov.github.io/nes_ebook/chapter_1.html) loosely. (Honestly, huge shoutout to this author this is really nicely written w/ good links that give thorough details. Makes me interested in doing something
+  similar to this as I progress and learn new things.)<br><br>
 Making this for fun. Want to learn how to use the [SDL library](https://www.libsdl.org), and about adding controller support.
-Also learning about the way the hardware / software
+Also learning about the way the hardware / software works w/ this system given no os
 
 
 
