@@ -6,7 +6,7 @@
 void set_zero_flag(cpu *core, uint8_t val);
 void set_negative_flag(cpu *core, uint8_t val);
 void set_carry_flag(cpu *core, uint8_t val, bool set);
-size_t get_params(cpu *core, int mode);
+size_t get_params(cpu *core, int mode, bool read_byte);
 
 /* just trying to understand the flags, notice that if both negative flag
  * and zero flag are not set, we have 0xff, else we don't
@@ -40,22 +40,29 @@ void load(cpu *core, size_t data, uint8_t *reg) {
 
 /* Loads a byte of memory into the X register */
 int ldy(cpu *core, int mode) {
-  uint8_t instruction = get_params(core, mode);
+  size_t instruction = get_params(core, mode, true);
   load(core, instruction, &core->regs->Y);
   return 0;
 }
 
 /* Loads a byte of memory into the X register */
 int ldx(cpu *core, int mode) {
-  uint8_t instruction = get_params(core, mode);
+  uint8_t instruction = get_params(core, mode, true);
   load(core, instruction, &core->regs->X);
   return 0;
 }
 
 /* Loads a byte of memroy into the accumulator register */
 int lda(cpu *core, int mode) {
-  uint8_t instruction = get_params(core, mode);
+  uint8_t instruction = get_params(core, mode, true);
   load(core, instruction, &core->regs->A);
+  return 0;
+}
+
+/* Stores the value of the accumulator into the given address */
+int sta(cpu *core, int mode) {
+  size_t instruction = get_params(core, mode, false);
+  mem_write(core, (uint16_t)instruction, core->regs->A);
   return 0;
 }
 
@@ -92,7 +99,7 @@ int inx(cpu *core) {
 
 /* compares the value to the Y register */
 int cpy(cpu *core, int mode) {
-  uint8_t instruction = get_params(core, mode);
+  uint8_t instruction = get_params(core, mode, true);
   uint8_t y = core->regs->Y;
 
   /* set negative flag if bit is set in status register */
@@ -152,8 +159,9 @@ uint16_t wrap_around_byte_add(size_t inp, size_t offset) {
 }
 
 /* Get parameters based on the addressing mode that was passed in */
-size_t get_params(cpu *core, int mode) {
+size_t get_params(cpu *core, int mode, bool read_byte) {
   size_t out = 0;
+  size_t pre_out;
   uint8_t zero_page; /* Zero page addressing -> 0x00 => 0xff */
   uint16_t abs;      /* Access to all pages -> 0x0000 => 0xffff */
   uint8_t lo;
@@ -162,43 +170,42 @@ size_t get_params(cpu *core, int mode) {
   switch (mode) {
   case (Immediate):
     /* Next byte, and uses it as an immediate value */
-    out = fetch_byte(core);
+    pre_out = fetch_byte(core);
+    read_byte = false;
     break;
 
   case (ZeroPage):
     /* Next byte is used as an address, 0-page => first half of memory */
-    zero_page = fetch_byte(core);
-    out = mem_read(core, zero_page);
+    pre_out = fetch_byte(core);
     break;
 
-  case (ZeroPage_X):;
+  case (ZeroPage_X):
     /* Next byte + X-reg is used as an address, 0-page wrap-around */
     zero_page = fetch_byte(core);
-    out = mem_read(core, wrap_around_byte_add(zero_page, core->regs->X));
+    pre_out = wrap_around_byte_add(zero_page, core->regs->X);
     break;
 
   case (ZeroPage_Y):;
     /* Next byte + Y-reg is used as an address, 0-page wrap-around */
     zero_page = fetch_byte(core);
-    out = mem_read(core, wrap_around_byte_add(zero_page, core->regs->Y));
+    pre_out = wrap_around_byte_add(zero_page, core->regs->Y);
     break;
 
   case (Absolute):
     /* Next 2 bytes are used as an address */
-    abs = fetch_two_bytes(core);
-    out = mem_read(core, abs);
+    pre_out = fetch_two_bytes(core);
     break;
 
   case (Absolute_X):
     /* Next 2 bytes+ X-reg are used as an address, full memory wrap-around */
     abs = fetch_two_bytes(core);
-    out = mem_read(core, wrap_around_2byte_add(abs, core->regs->X));
+    pre_out = wrap_around_2byte_add(abs, core->regs->X);
     break;
 
   case (Absolute_Y):
     /* Next 2 bytes+ Y-reg are used as an address, full memory wrap-around */
     abs = fetch_two_bytes(core);
-    out = mem_read(core, wrap_around_2byte_add(abs, core->regs->Y));
+    pre_out = wrap_around_2byte_add(abs, core->regs->Y);
     break;
 
   case (Indirect):
@@ -206,8 +213,7 @@ size_t get_params(cpu *core, int mode) {
     abs = fetch_two_bytes(core);
     lo = mem_read(core, abs);
     hi = mem_read(core, abs + 1);
-    abs = (hi << 8) | lo;
-    out = mem_read(core, abs);
+    pre_out = (hi << 8) | lo;
     break;
 
   case (Indirect_X):
@@ -216,8 +222,7 @@ size_t get_params(cpu *core, int mode) {
     abs = wrap_around_byte_add(zero_page, core->regs->X);
     lo = mem_read(core, abs);
     hi = mem_read(core, abs + 1);
-    abs = (hi << 8) | lo;
-    out = mem_read(core, abs);
+    pre_out = (hi << 8) | lo;
     break;
 
   case (Indirect_Y):
@@ -226,8 +231,7 @@ size_t get_params(cpu *core, int mode) {
     abs = wrap_around_byte_add(zero_page, core->regs->Y);
     lo = mem_read(core, abs);
     hi = mem_read(core, abs + 1);
-    abs = (hi << 8) | lo;
-    out = mem_read(core, abs);
+    pre_out = (hi << 8) | lo;
     break;
 
   case (NoneAddressing):
@@ -236,5 +240,6 @@ size_t get_params(cpu *core, int mode) {
     printf("Invalid adressing mode %d! \n", mode);
     exit(-1);
   }
+  out = read_byte ? mem_read(core, pre_out) : pre_out;
   return out;
 }

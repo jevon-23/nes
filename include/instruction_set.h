@@ -6,6 +6,9 @@
 
 /* 6502 instruction set */
 
+/* stores the value in the accumulator to a given address */
+int sta(cpu *core, int mode);
+
 /* load in the next byte from program into A register */
 int lda(cpu *core, int mode);
 
