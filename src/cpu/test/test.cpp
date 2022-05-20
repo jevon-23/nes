@@ -30,6 +30,70 @@ TEST(testLDX, LDX_Imm) {
   free_cpu(core);
 }
 
+TEST(testLDX, LDX_zero) {
+  cpu *core = init_cpu();
+  mem_write(core, 0x10, 0x55);
+  *(core->storage->mem + 0x8000) = 0xa6; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x10; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 2) = 0x00;
+  run_cpu(core);
+  EXPECT_EQ(core->regs->X, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testLDX, LDX_zero_y) {
+  cpu *core = init_cpu();
+  mem_write(core, 0x15, 0x55);
+  /* Load a value into the x register */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDX ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* LDX zero page + Y */
+  *(core->storage->mem + 0x8000 + 2) = 0xb6; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 3) = 0x10; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 4) = 0x00;
+  run_cpu(core);
+  EXPECT_EQ(core->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->X, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testLDX, LDX_abs) {
+  cpu *core = init_cpu();
+  mem_write(core, 0xbeef, 0x55);
+  *(core->storage->mem + 0x8000) = 0xae; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0xef; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 2) = 0xbe;
+  *(core->storage->mem + 0x8000 + 3) = 0x00;
+  run_cpu(core);
+  EXPECT_EQ(core->regs->X, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testLDX, LDX_abs_y) {
+  cpu *core = init_cpu();
+  mem_write(core, 0xbeef, 0x55);
+
+  /* Load a value into the x register */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDX ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x0f; /* num to be loaded in */
+
+  /* LDA abs x */
+  *(core->storage->mem + 0x8000 + 2) = 0xbe; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 3) = 0xe0; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 4) = 0xbe;
+  *(core->storage->mem + 0x8000 + 5) = 0x00;
+
+  run_cpu(core);
+  EXPECT_EQ(core->regs->Y, 0x0f); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->X, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
 TEST(testLDA, LDA) {
   cpu *core = init_cpu();
   *(core->storage->mem + 0x8000) = 0xa9; /* LDA ins top */

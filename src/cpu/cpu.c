@@ -91,10 +91,42 @@ int opcode_handler(cpu *core, uint8_t opcode) {
   case 0xA0:
     ldy(core, Immediate);
     break;
+  /* Zero-page */
+  case 0xA4:
+    ldy(core, ZeroPage);
+    break;
+  /* Zero-page, x */
+  case 0xB4:
+    ldy(core, ZeroPage_X);
+    break;
+  /* Absolute */
+  case 0xAC:
+    ldy(core, Absolute);
+    break;
+  /* Absolute, x */
+  case 0xBC:
+    ldy(core, Absolute_X);
+    break;
 
-  /* LDX Immediate */
+  /* Immediate */
   case 0xA2:
     ldx(core, Immediate);
+    break;
+  /* Zero-page */
+  case 0xA6:
+    ldx(core, ZeroPage);
+    break;
+  /* Zero-page, Y */
+  case 0xB6:
+    ldx(core, ZeroPage_Y);
+    break;
+  /* Absolute */
+  case 0xAE:
+    ldx(core, Absolute);
+    break;
+  /* Absolute */
+  case 0xBE:
+    ldx(core, Absolute_Y);
     break;
 
   /* LDA Immediate */
