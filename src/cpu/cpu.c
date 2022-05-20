@@ -87,9 +87,47 @@ int opcode_handler(cpu *core, uint8_t opcode) {
     tax(core);
     break;
 
-  /* LDA immediate */
-  case 0xA9:;
+  /* LDY Immediate */
+  case 0xA0:
+    ldy(core, Immediate);
+    break;
+
+  /* LDX Immediate */
+  case 0xA2:
+    ldx(core, Immediate);
+    break;
+
+  /* LDA Immediate */
+  case 0xA9:
     lda(core, Immediate);
+    break;
+  /* Zero page */
+  case 0xA5:
+    lda(core, ZeroPage);
+    break;
+  /* Zero page, x */
+  case 0xB5:
+    lda(core, ZeroPage_X);
+    break;
+  /* Absolute */
+  case 0xAD:
+    lda(core, Absolute);
+    break;
+  /* Absolute, X */
+  case 0xBD:
+    lda(core, Absolute_X);
+    break;
+  /* Absolute, Y */
+  case 0xB9:
+    lda(core, Absolute_Y);
+    break;
+  /* Indirect, X */
+  case 0xA1:
+    lda(core, Indirect_X);
+    break;
+  /* Indrect, Y */
+  case 0xB1:
+    lda(core, Indirect_Y);
     break;
 
   /* CPY immediate */

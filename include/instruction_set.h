@@ -9,6 +9,12 @@
 /* load in the next byte from program into A register */
 int lda(cpu *core, int mode);
 
+/* load in the next byte from program into X register */
+int ldx(cpu *core, int mode);
+
+/* load in the next byte from progarm into Y register */
+int ldy(cpu *core, int mode);
+
 /* load the value inside of A regiester into X regiester */
 int tax(cpu *core);
 

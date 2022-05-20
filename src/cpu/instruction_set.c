@@ -26,18 +26,36 @@ int sec(cpu *core) {
   return 0;
 }
 
-/* Loads a byte of memroy into the accumulator */
-int lda(cpu *core, int mode) {
-  uint8_t instruction = get_params(core, mode);
+/* Loads DATA into REGS */
+void load(cpu *core, size_t data, uint8_t *reg) {
   /* set zero flag */
-  set_zero_flag(core, instruction);
+  set_zero_flag(core, data);
 
   /* set negative flag */
-  set_negative_flag(core, instruction);
+  set_negative_flag(core, data);
 
-  /* set the A register */
-  core->regs->A = instruction;
+  /* set the register */
+  *reg = data;
+}
 
+/* Loads a byte of memory into the X register */
+int ldy(cpu *core, int mode) {
+  uint8_t instruction = get_params(core, mode);
+  load(core, instruction, &core->regs->Y);
+  return 0;
+}
+
+/* Loads a byte of memory into the X register */
+int ldx(cpu *core, int mode) {
+  uint8_t instruction = get_params(core, mode);
+  load(core, instruction, &core->regs->X);
+  return 0;
+}
+
+/* Loads a byte of memroy into the accumulator register */
+int lda(cpu *core, int mode) {
+  uint8_t instruction = get_params(core, mode);
+  load(core, instruction, &core->regs->A);
   return 0;
 }
 
@@ -138,55 +156,78 @@ size_t get_params(cpu *core, int mode) {
   size_t out = 0;
   uint8_t zero_page; /* Zero page addressing -> 0x00 => 0xff */
   uint16_t abs;      /* Access to all pages -> 0x0000 => 0xffff */
+  uint8_t lo;
+  uint8_t hi;
 
   switch (mode) {
   case (Immediate):
+    /* Next byte, and uses it as an immediate value */
     out = fetch_byte(core);
     break;
 
   case (ZeroPage):
-    out = fetch_byte(core);
+    /* Next byte is used as an address, 0-page => first half of memory */
+    zero_page = fetch_byte(core);
+    out = mem_read(core, zero_page);
     break;
 
   case (ZeroPage_X):;
+    /* Next byte + X-reg is used as an address, 0-page wrap-around */
     zero_page = fetch_byte(core);
-    out = wrap_around_byte_add(zero_page, core->regs->X);
+    out = mem_read(core, wrap_around_byte_add(zero_page, core->regs->X));
     break;
 
   case (ZeroPage_Y):;
+    /* Next byte + Y-reg is used as an address, 0-page wrap-around */
     zero_page = fetch_byte(core);
-    out = wrap_around_byte_add(zero_page, core->regs->Y);
+    out = mem_read(core, wrap_around_byte_add(zero_page, core->regs->Y));
     break;
 
   case (Absolute):
-    out = fetch_two_bytes(core);
+    /* Next 2 bytes are used as an address */
+    abs = fetch_two_bytes(core);
+    out = mem_read(core, abs);
     break;
 
   case (Absolute_X):
+    /* Next 2 bytes+ X-reg are used as an address, full memory wrap-around */
     abs = fetch_two_bytes(core);
-    out = wrap_around_2byte_add(abs, core->regs->X);
+    out = mem_read(core, wrap_around_2byte_add(abs, core->regs->X));
     break;
 
   case (Absolute_Y):
+    /* Next 2 bytes+ Y-reg are used as an address, full memory wrap-around */
     abs = fetch_two_bytes(core);
-    out = wrap_around_2byte_add(abs, core->regs->Y);
+    out = mem_read(core, wrap_around_2byte_add(abs, core->regs->Y));
     break;
 
-  /* Check the indirects i don't know about these */
   case (Indirect):
+    /* Indirect pointer; address => two bytes == actual deref address => data */
     abs = fetch_two_bytes(core);
-    out = mem_read_16(core, abs);
+    lo = mem_read(core, abs);
+    hi = mem_read(core, abs + 1);
+    abs = (hi << 8) | lo;
+    out = mem_read(core, abs);
     break;
+
   case (Indirect_X):
+    /* Indirect pointer; address + X-Reg */
     zero_page = fetch_byte(core);
     abs = wrap_around_byte_add(zero_page, core->regs->X);
-    out = mem_read_16(core, abs);
+    lo = mem_read(core, abs);
+    hi = mem_read(core, abs + 1);
+    abs = (hi << 8) | lo;
+    out = mem_read(core, abs);
     break;
 
   case (Indirect_Y):
+    /* Indirect pointer; address + Y-Reg */
     zero_page = fetch_byte(core);
     abs = wrap_around_byte_add(zero_page, core->regs->Y);
-    out = mem_read_16(core, abs);
+    lo = mem_read(core, abs);
+    hi = mem_read(core, abs + 1);
+    abs = (hi << 8) | lo;
+    out = mem_read(core, abs);
     break;
 
   case (NoneAddressing):
