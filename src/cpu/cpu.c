@@ -247,6 +247,46 @@ int opcode_handler(cpu *core, uint8_t opcode) {
     lda(core, Indirect_Y);
     break;
 
+  /* CMP immediate */
+  case 0xc9:
+    cmp(core, Immediate);
+    break;
+
+  /* CMP Zero-page */
+  case 0xc5:
+    cmp(core, ZeroPage);
+    break;
+
+  /* CMP Zero-page, X */
+  case 0xd5:
+    cmp(core, ZeroPage_X);
+    break;
+
+  /* CMP Absolute */
+  case 0xcd:
+    cmp(core, Absolute);
+    break;
+
+  /* CMP Absolute, X */
+  case 0xdd:
+    cmp(core, Absolute_X);
+    break;
+
+  /* CMP Absolute, Y */
+  case 0xd9:
+    cmp(core, Absolute_Y);
+    break;
+
+  /* CMP Indirect, X */
+  case 0xc1:
+    cmp(core, Indirect_X);
+    break;
+
+  /* CMP Indirect, Y */
+  case 0xd1:
+    cmp(core, Indirect_Y);
+    break;
+
   /* CPX immediate */
   case 0xe0:;
     cpx(core, Immediate);

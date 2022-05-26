@@ -163,6 +163,15 @@ void compare(cpu *core, size_t a, size_t b) {
   set_negative_flag(core, core->regs->stat);
 }
 
+/* compares the value to the Accumulator register */
+int cmp(cpu *core, int mode) {
+  uint8_t instruction = get_params(core, mode, true);
+  uint8_t a = core->regs->A;
+
+  compare(core, a, instruction);
+  return 0;
+}
+
 /* compares the value to the X register */
 int cpx(cpu *core, int mode) {
   uint8_t instruction = get_params(core, mode, true);

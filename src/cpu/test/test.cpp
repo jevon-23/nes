@@ -974,6 +974,56 @@ TEST(testCPY, CPY_imm) {
   free_cpu(core3);
 }
 
+TEST(testCMP, CMP_imm) {
+  cpu *core = init_cpu();
+
+  /* a < imm */
+  /* LDY 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa9; /* LDY ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 2) = 0xc9; /* cpy */
+  *(core->storage->mem + 0x8000 + 3) = 0x10; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core);
+  EXPECT_EQ(core->regs->A, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x01, 0x0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x2, 0x0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x08, 0x08); // negative flag
+  free_cpu(core);
+
+  cpu *core2 = init_cpu();
+
+  /* y > imm */
+  /* LDY 0x05 */
+  *(core2->storage->mem + 0x8000) = 0xa9; /* LDY ins top */
+  *(core2->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core2->storage->mem + 0x8000 + 2) = 0xc9; /* cpy */
+  *(core2->storage->mem + 0x8000 + 3) = 0x01; /* num to be loaded in */
+  *(core2->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core2);
+  EXPECT_EQ(core2->regs->A, 0x05); // make sure a register was set
+  EXPECT_EQ(core2->regs->stat & 0x01, 0x1); // 0 flag
+  EXPECT_EQ(core2->regs->stat & 0x2, 0x0); // 0 flag
+  EXPECT_EQ(core2->regs->stat & 0x08, 0x00); // negative flag
+  free_cpu(core2);
+
+  cpu *core3 = init_cpu();
+
+  /* y > imm */
+  /* LDY 0x05 */
+  *(core3->storage->mem + 0x8000) = 0xa9; /* LDY ins top */
+  *(core3->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core3->storage->mem + 0x8000 + 2) = 0xc9; /* cpy */
+  *(core3->storage->mem + 0x8000 + 3) = 0x05; /* num to be loaded in */
+  *(core3->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core3);
+  EXPECT_EQ(core3->regs->A, 0x05); // make sure a register was set
+  EXPECT_EQ(core3->regs->stat & 0x01, 0x1); // 0 flag
+  EXPECT_EQ(core3->regs->stat & 0x2, 0x2); // 0 flag
+  EXPECT_EQ(core3->regs->stat & 0x08, 0x00); // negative flag
+  free_cpu(core3);
+}
+
 TEST(testCPX, CPX_imm) {
   cpu *core = init_cpu();
 

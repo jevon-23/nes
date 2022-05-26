@@ -45,10 +45,13 @@ int tya(cpu *core);
 /* increase X register by 1 */
 int inx(cpu *core);
 
+/* compare the next byte from program w/ Accumulator register */
+int cmp(cpu *core, int mode);
+
 /* compare the next byte from program w/ Y register */
 int cpy(cpu *core, int mode);
 
-/* compare the next byte from program w/ Y register */
+/* compare the next byte from program w/ X register */
 int cpx(cpu *core, int mode);
 
 /* sets the status register to be 1 for the carry */
