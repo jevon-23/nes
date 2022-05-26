@@ -1,0 +1,19 @@
+#########
+# cmake #
+#########
+CTestTestfile.cmake
+CMakeFiles
+CMakeCache.txt
+Makefile
+_deps
+bin
+cmake_install.cmake
+lib
+test_instructions
+test_utils
+
+##############
+# .swp files #
+##############
+*.swp
+nes
