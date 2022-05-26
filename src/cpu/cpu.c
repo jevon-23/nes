@@ -82,9 +82,65 @@ int opcode_handler(cpu *core, uint8_t opcode) {
     /* BRK */
     return 23; // jordan year baby
 
+  case 0xEA:
+    /* NOP (no-op) */
+    break;
+
   case 0xAA:
     /* TAX */
     tax(core);
+    break;
+
+  case 0xA8:
+    /* TAY */
+    tay(core);
+    break;
+
+  /* TODO: implement stack functionality and use to test each other */
+  case 0xBA:
+    /* TSX */
+    tsx(core);
+    break;
+
+  case 0x8A:
+    /* TSA */
+    txa(core);
+    break;
+
+  case 0x9A:
+    /* TSS */
+    txs(core);
+    break;
+
+  case 0x98:
+    /* TSS */
+    tya(core);
+    break;
+
+  /* STY Zero-page */
+  case 0x84:
+    sty(core, ZeroPage);
+    break;
+  /* STY Zero-page, X */
+  case 0x94:
+    sty(core, ZeroPage_X);
+    break;
+  /* STY Abs */
+  case 0x8C:
+    sty(core, Absolute);
+    break;
+
+  /* STX Zero-page */
+  case 0x86:
+    stx(core, ZeroPage);
+    break;
+  /* STX Zero-page, Y */
+  case 0x96:
+    stx(core, ZeroPage_Y);
+    break;
+  /* STX Abs */
+  case 0x8E:
+    stx(core, Absolute);
     break;
 
   /* STA Zero-page */
@@ -191,10 +247,36 @@ int opcode_handler(cpu *core, uint8_t opcode) {
     lda(core, Indirect_Y);
     break;
 
+  /* CPX immediate */
+  case 0xe0:;
+    cpx(core, Immediate);
+    break;
+
+  /* CPX zero-page TODO: write test */
+  case 0xe4:;
+    cpx(core, ZeroPage);
+    break;
+
+  /* CPX abs TODO : write test */
+  case 0xec:;
+    cpx(core, Absolute);
+    break;
+
   /* CPY immediate */
   case 0xc0:;
     cpy(core, Immediate);
     break;
+
+  /* CPY zero-page TODO: write test */
+  case 0xc4:;
+    cpy(core, ZeroPage);
+    break;
+
+  /* CPY abs TODO : write test */
+  case 0xcc:;
+    cpy(core, Absolute);
+    break;
+
   /* INC X */
   case 0xe8:
     inx(core);

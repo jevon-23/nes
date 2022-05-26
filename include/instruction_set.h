@@ -6,6 +6,12 @@
 
 /* 6502 instruction set */
 
+/* stores the value in the Y-register to a given address */
+int sty(cpu *core, int mode);
+
+/* stores the value in the X-register to a given address */
+int stx(cpu *core, int mode);
+
 /* stores the value in the accumulator to a given address */
 int sta(cpu *core, int mode);
 
@@ -21,11 +27,29 @@ int ldy(cpu *core, int mode);
 /* load the value inside of A regiester into X regiester */
 int tax(cpu *core);
 
+/* load the value inside of A regiester into Y regiester */
+int tay(cpu *core);
+
+/* load the value inside of the stack pointer A regiester */
+int tsx(cpu *core);
+
+/* load the value inside of X regiester into A regiester */
+int txa(cpu *core);
+
+/* load the value inside of X regiester into stack pointer */
+int txs(cpu *core);
+
+/* load the value inside of Y regiester into A regiester */
+int tya(cpu *core);
+
 /* increase X register by 1 */
 int inx(cpu *core);
 
 /* compare the next byte from program w/ Y register */
 int cpy(cpu *core, int mode);
+
+/* compare the next byte from program w/ Y register */
+int cpx(cpu *core, int mode);
 
 /* sets the status register to be 1 for the carry */
 int sec(cpu *core);

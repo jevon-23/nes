@@ -5,6 +5,7 @@
 
 void set_zero_flag(cpu *core, uint8_t val);
 void set_negative_flag(cpu *core, uint8_t val);
+void set_zero_negative_flag(cpu *core, uint8_t val);
 void set_carry_flag(cpu *core, uint8_t val, bool set);
 size_t get_params(cpu *core, int mode, bool read_byte);
 
@@ -22,17 +23,14 @@ int clc(cpu *core) {
 
 /* Set carry flag = 1 */
 int sec(cpu *core) {
-  core->regs->stat &= 0x01; /* set flag = 1 */
+  core->regs->stat |= 0x01; /* set flag = 1 */
   return 0;
 }
 
 /* Loads DATA into REGS */
 void load(cpu *core, size_t data, uint8_t *reg) {
-  /* set zero flag */
-  set_zero_flag(core, data);
-
-  /* set negative flag */
-  set_negative_flag(core, data);
+  /* Set zero and negative flags */
+  set_zero_negative_flag(core, data);
 
   /* set the register */
   *reg = data;
@@ -59,26 +57,72 @@ int lda(cpu *core, int mode) {
   return 0;
 }
 
+/* Stores the value of the register into the given address */
+void store(cpu *core, uint8_t *reg, int mode) {
+  size_t instruction = get_params(core, mode, false);
+  mem_write(core, (uint16_t)instruction, *reg);
+}
+
+/* Stores the value of the y register into the given address */
+int sty(cpu *core, int mode) {
+  store(core, &core->regs->Y, mode);
+  return 0;
+}
+
+/* Stores the value of the x register into the given address */
+int stx(cpu *core, int mode) {
+  store(core, &core->regs->X, mode);
+  return 0;
+}
+
 /* Stores the value of the accumulator into the given address */
 int sta(cpu *core, int mode) {
-  size_t instruction = get_params(core, mode, false);
-  mem_write(core, (uint16_t)instruction, core->regs->A);
+  store(core, &core->regs->A, mode);
   return 0;
+}
+
+void transfer(cpu *core, uint8_t *src, uint8_t *dest) {
+
+  /* Set the 0 and negative flag */
+  set_zero_negative_flag(core, *src);
+
+  /* transfer data from src to dest */
+  *dest = *src;
 }
 
 /* Load the value in the A register to X register */
 int tax(cpu *core) {
-  uint8_t a = core->regs->A;
+  transfer(core, &core->regs->A, &core->regs->X);
+  return 0;
+}
 
-  /* set 0 flag */
-  set_zero_flag(core, a);
+/* Load the value in the A register to X register */
+int tay(cpu *core) {
+  transfer(core, &core->regs->A, &core->regs->Y);
+  return 0;
+}
 
-  /* set negative flag */
-  set_negative_flag(core, a);
+/* Load the value in the stack pointer to X register */
+int tsx(cpu *core) {
+  transfer(core, &core->regs->esp, &core->regs->X);
+  return 0;
+}
 
-  /* set the A register */
-  core->regs->X = core->regs->A;
+/* Load the value in the stack pointer to X register */
+int txa(cpu *core) {
+  transfer(core, &core->regs->X, &core->regs->A);
+  return 0;
+}
 
+/* Load the value in the stack pointer to X register */
+int txs(cpu *core) {
+  transfer(core, &core->regs->X, &core->regs->esp);
+  return 0;
+}
+
+/* Load the value in the stack pointer to X register */
+int tya(cpu *core) {
+  transfer(core, &core->regs->Y, &core->regs->A);
   return 0;
 }
 
@@ -88,13 +132,35 @@ int inx(cpu *core) {
   core->regs->X++;
   uint8_t x = core->regs->X;
 
-  /* set_zero flag */
-  set_zero_flag(core, x);
-
-  /* set negative flag */
-  set_negative_flag(core, x);
+  /* Set the zero and negative flags */
+  set_zero_negative_flag(core, x);
 
   return 0;
+}
+
+/* Compares A to B. Sets carry flag if A >= B, else sets 0 flag */
+void compare(cpu *core, size_t a, size_t b) {
+  bool less = true;
+  /* compare y register with byte from program */
+  if (a >= b) {
+    less = false;
+    set_carry_flag(core, a, true);
+  } else {
+    set_carry_flag(core, a, false);
+  }
+
+  if (a == b) {
+    less = false;
+    set_zero_flag(core, 0);
+  } else {
+    set_zero_flag(core, 1);
+  }
+
+  /* if our value is less than => set up stat */
+  (less) ? core->regs->stat |= 0x80 : core->regs->stat;
+
+  /* set negative flag if bit is set in status register */
+  set_negative_flag(core, core->regs->stat);
 }
 
 /* compares the value to the Y register */
@@ -102,16 +168,7 @@ int cpy(cpu *core, int mode) {
   uint8_t instruction = get_params(core, mode, true);
   uint8_t y = core->regs->Y;
 
-  /* set negative flag if bit is set in status register */
-  set_negative_flag(core, core->regs->stat);
-
-  /* compare y register with byte from program */
-  if (y >= instruction) {
-    set_carry_flag(core, y, true);
-  } else if (y == 0) {
-    set_zero_flag(core, 0);
-  }
-
+  compare(core, y, instruction);
   return 0;
 }
 
@@ -125,6 +182,14 @@ void set_zero_flag(cpu *core, uint8_t val) {
 /* Sets the status register for the negative flag */
 void set_negative_flag(cpu *core, uint8_t val) {
   (val & 0x80) ? (core->regs->stat |= 0x08) : (core->regs->stat &= 0x7f);
+}
+
+void set_zero_negative_flag(cpu *core, uint8_t val) {
+  /* set zero flag */
+  set_zero_flag(core, val);
+
+  /* set negative flag */
+  set_negative_flag(core, val);
 }
 
 /* sets the carry flag */
@@ -240,6 +305,8 @@ size_t get_params(cpu *core, int mode, bool read_byte) {
     printf("Invalid adressing mode %d! \n", mode);
     exit(-1);
   }
+
+  /* If we are doing a store, we do not want to read the contents */
   out = read_byte ? mem_read(core, pre_out) : pre_out;
   return out;
 }

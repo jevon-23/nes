@@ -684,9 +684,55 @@ TEST(testTax, tax) {
   *(core->storage->mem + 0x8000 + 3) = 0x00;
   run_cpu(core);
 
+  EXPECT_EQ(core->regs->A, 10);
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->X, 10);
+}
+
+TEST(testTay, tay) {
+  cpu *core = init_cpu();
+  
+  *(core->storage->mem + 0x8000) = 0xa9; /* LDA inst op */
+  *(core->storage->mem + 0x8000 + 1) = 0x0a; /* Load 10 into A register */
+  *(core->storage->mem + 0x8000 + 2) = 0xa8; /* Tay inst op */
+  *(core->storage->mem + 0x8000 + 3) = 0x00;
+  run_cpu(core);
+
+  EXPECT_EQ(core->regs->A, 10);
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->Y, 10);
+}
+
+TEST(testTxa, txa) {
+  cpu *core = init_cpu();
+  
+  *(core->storage->mem + 0x8000) = 0xa2; /* LDX inst op */
+  *(core->storage->mem + 0x8000 + 1) = 0x0a; /* Load 10 into A register */
+  *(core->storage->mem + 0x8000 + 2) = 0x8a; /* Txa inst op */
+  *(core->storage->mem + 0x8000 + 3) = 0x00;
+  run_cpu(core);
+
   EXPECT_EQ(core->regs->X, 10);
   EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
   EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->A, 10);
+}
+
+TEST(testTya, tya) {
+  cpu *core = init_cpu();
+  
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDY inst op */
+  *(core->storage->mem + 0x8000 + 1) = 0x0a; /* Load 10 into A register */
+  *(core->storage->mem + 0x8000 + 2) = 0x98; /* Txa inst op */
+  *(core->storage->mem + 0x8000 + 3) = 0x00;
+  run_cpu(core);
+
+  EXPECT_EQ(core->regs->Y, 10);
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->A, 10);
 }
 
 TEST(test5s, test5) {
@@ -741,4 +787,192 @@ TEST(testWrap2Add, wrap_around2_add) {
     EXPECT_EQ(out, 0x007f);
 
 }
+
+/* Tests out of order but this just how it is */
+
+TEST(testSTX, STX_zero) {
+  cpu *core = init_cpu();
+
+  /* LDX 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa2; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* STX into 0x20 */
+  *(core->storage->mem + 0x8000 + 2) = 0x86;
+  *(core->storage->mem + 0x8000 + 3) = 0x20;
+  *(core->storage->mem + 0x8000 + 4) = 0x00;
+  run_cpu(core);
+  uint8_t x = mem_read(core, 0x0020);
+  EXPECT_EQ(core->regs->X, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(x, 0x05); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testSTX, STX_zero_y) {
+  cpu *core = init_cpu();
+
+  /* Load a value into the y register */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDX ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* Store a value into the x register */
+  *(core->storage->mem + 0x8000 + 2) = 0xa2; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 3) = 0x55; /* num to be loaded in */
+
+  /* STX into 0x20+X */
+  *(core->storage->mem + 0x8000 + 4) = 0x96;
+  *(core->storage->mem + 0x8000 + 5) = 0x20;
+  *(core->storage->mem + 0x8000 + 6) = 0x00;
+
+  run_cpu(core);
+  uint8_t x = mem_read(core, 0x25);
+  EXPECT_EQ(core->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->X, 0x55); // make sure a register was set
+  EXPECT_EQ(x, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testSTX, STX_abs) {
+  cpu *core = init_cpu();
+
+  /* LDX 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa2; /* LDX ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* STX into 0x20 */
+  *(core->storage->mem + 0x8000 + 2) = 0x8e;
+  *(core->storage->mem + 0x8000 + 3) = 0xef;
+  *(core->storage->mem + 0x8000 + 4) = 0xbe;
+  *(core->storage->mem + 0x8000 + 5) = 0x00;
+  run_cpu(core);
+  uint8_t x = mem_read(core, 0xbeef);
+  EXPECT_EQ(core->regs->X, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(x, 0x05); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testSTY, STY_zero) {
+  cpu *core = init_cpu();
+
+  /* LDY 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* STY into 0x20 */
+  *(core->storage->mem + 0x8000 + 2) = 0x84;
+  *(core->storage->mem + 0x8000 + 3) = 0x20;
+  *(core->storage->mem + 0x8000 + 4) = 0x00;
+  run_cpu(core);
+  uint8_t y = mem_read(core, 0x0020);
+  EXPECT_EQ(core->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(y, 0x05); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testSTY, STY_zero_x) {
+  cpu *core = init_cpu();
+
+  /* Load a value into the x register */
+  *(core->storage->mem + 0x8000) = 0xa2; /* LDX ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* Store a value into the y-register */
+  *(core->storage->mem + 0x8000 + 2) = 0xa0; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 3) = 0x55; /* num to be loaded in */
+
+  /* STY into 0x20+X */
+  *(core->storage->mem + 0x8000 + 4) = 0x96;
+  *(core->storage->mem + 0x8000 + 5) = 0x20;
+  *(core->storage->mem + 0x8000 + 6) = 0x00;
+
+  run_cpu(core);
+  uint8_t y = mem_read(core, 0x25);
+  EXPECT_EQ(core->regs->X, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(core->regs->Y, 0x55); // make sure a register was set
+  EXPECT_EQ(y, 0x55); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testSTY, STY_abs) {
+  cpu *core = init_cpu();
+
+  /* LDY 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDA ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+
+  /* STA into 0x20 */
+  *(core->storage->mem + 0x8000 + 2) = 0x8c;
+  *(core->storage->mem + 0x8000 + 3) = 0xef;
+  *(core->storage->mem + 0x8000 + 4) = 0xbe;
+  *(core->storage->mem + 0x8000 + 5) = 0x00;
+  run_cpu(core);
+  uint8_t y = mem_read(core, 0xbeef);
+  EXPECT_EQ(core->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x02, 0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x80, 0); // negative flag
+  EXPECT_EQ(y, 0x05); // make sure a register was set
+  free_cpu(core);
+}
+
+TEST(testCPY, CPY_imm_less) {
+  cpu *core = init_cpu();
+
+  /* y < imm */
+  /* LDY 0x05 */
+  *(core->storage->mem + 0x8000) = 0xa0; /* LDY ins top */
+  *(core->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 2) = 0xc0; /* cpy */
+  *(core->storage->mem + 0x8000 + 3) = 0x10; /* num to be loaded in */
+  *(core->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core);
+  EXPECT_EQ(core->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core->regs->stat & 0x01, 0x0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x2, 0x0); // 0 flag
+  EXPECT_EQ(core->regs->stat & 0x08, 0x08); // negative flag
+  free_cpu(core);
+
+  cpu *core2 = init_cpu();
+
+  /* y > imm */
+  /* LDY 0x05 */
+  *(core2->storage->mem + 0x8000) = 0xa0; /* LDY ins top */
+  *(core2->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core2->storage->mem + 0x8000 + 2) = 0xc0; /* cpy */
+  *(core2->storage->mem + 0x8000 + 3) = 0x01; /* num to be loaded in */
+  *(core2->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core2);
+  EXPECT_EQ(core2->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core2->regs->stat & 0x01, 0x1); // 0 flag
+  EXPECT_EQ(core2->regs->stat & 0x2, 0x0); // 0 flag
+  EXPECT_EQ(core2->regs->stat & 0x08, 0x00); // negative flag
+  free_cpu(core2);
+
+  cpu *core3 = init_cpu();
+
+  /* y > imm */
+  /* LDY 0x05 */
+  *(core3->storage->mem + 0x8000) = 0xa0; /* LDY ins top */
+  *(core3->storage->mem + 0x8000 + 1) = 0x05; /* num to be loaded in */
+  *(core3->storage->mem + 0x8000 + 2) = 0xc0; /* cpy */
+  *(core3->storage->mem + 0x8000 + 3) = 0x05; /* num to be loaded in */
+  *(core3->storage->mem + 0x8000 + 4) = 0x00; /* num to be loaded in */
+  run_cpu(core3);
+  EXPECT_EQ(core3->regs->Y, 0x05); // make sure a register was set
+  EXPECT_EQ(core3->regs->stat & 0x01, 0x1); // 0 flag
+  EXPECT_EQ(core3->regs->stat & 0x2, 0x2); // 0 flag
+  EXPECT_EQ(core3->regs->stat & 0x08, 0x00); // negative flag
+  free_cpu(core3);
+}
+
+
 } // namespace
